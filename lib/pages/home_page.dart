@@ -18,7 +18,21 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.yellow,
         elevation: 0,
       ),
-      body: ListView(children: [TodoTile()]),
+      body: ListView(
+        children: [
+          TodoTile(
+            taskName: "Solve A Problem",
+            isDone: true,
+            onChanged: (p0) {},
+          ),
+
+          TodoTile(
+            taskName: "Solve 2 Problem",
+            isDone: false,
+            onChanged: (p0) {},
+          ),
+        ],
+      ),
     );
   }
 }
