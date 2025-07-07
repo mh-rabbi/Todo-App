@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/util/dialog_box.dart';
 import 'package:todo_app/util/todo_tile.dart';
 
 class HomePage extends StatefulWidget {
@@ -9,6 +10,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // text controller to get user input
+  final _controller = TextEditingController();
+
   // list of todo tasks
   List toDoList = [
     ["Sovle A problem", false],
@@ -22,6 +26,16 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // create new task method
+  void createNewTask() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return DialogBox(controller: _controller);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,6 +45,12 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.yellow,
         elevation: 0,
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: createNewTask,
+        backgroundColor: Colors.yellow,
+        child: Icon(Icons.add),
+      ),
+
       body: ListView.builder(
         itemCount: toDoList.length,
         itemBuilder: (context, index) {
