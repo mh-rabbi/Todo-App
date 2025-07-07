@@ -26,12 +26,25 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // save new task method
+  void saveNewTask() {
+    setState(() {
+      toDoList.add([_controller.text, false]); // add new task to the list
+      _controller.clear(); // clear the text field
+    });
+    Navigator.of(context).pop(); // close the dialog box
+  }
+
   // create new task method
   void createNewTask() {
     showDialog(
       context: context,
       builder: (context) {
-        return DialogBox(controller: _controller);
+        return DialogBox(
+          controller: _controller,
+          onSave: saveNewTask,
+          onCancel: () => Navigator.of(context).pop(), // cancel the view
+        );
       },
     );
   }

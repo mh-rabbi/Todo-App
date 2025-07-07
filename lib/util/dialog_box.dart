@@ -3,8 +3,16 @@ import 'package:todo_app/util/my_button.dart';
 
 class DialogBox extends StatelessWidget {
   final controller;
+  VoidCallback onSave; // Callback for save button
+  VoidCallback onCancel; // Callback for cancel button
+
   // controller to get user input
-  const DialogBox({super.key, required this.controller});
+  DialogBox({
+    super.key,
+    required this.controller,
+    required this.onSave,
+    required this.onCancel,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +40,7 @@ class DialogBox extends StatelessWidget {
                 //save button
                 MyButton(
                   text: "Save",
-                  onPressed: () {},
+                  onPressed: onSave,
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.yellow),
                   ),
@@ -42,7 +50,7 @@ class DialogBox extends StatelessWidget {
                 //cancel button
                 MyButton(
                   text: "Cancel",
-                  onPressed: () {},
+                  onPressed: onCancel,
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.yellow),
                   ),
