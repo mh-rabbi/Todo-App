@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todo_app/data/database.dart';
 import 'package:todo_app/util/dialog_box.dart';
 import 'package:todo_app/util/todo_tile.dart';
 
@@ -10,29 +12,44 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // reference the hive box
+  final _todoBox = Hive.box('todo_box');
+
+  ToDoDatabase db = ToDoDatabase(); // create an instance of the database
+
+  @override
+  void initState() {
+    //if first time running the app, create initial data
+    if (_todoBox.get('TODOLIST') == null) {
+      db.createInitialData(); // create initial data
+    }
+    // if the app is ran before on the phone, load the data from the database
+    else {
+      db.loadData(); // load the data from the database
+    }
+
+    super.initState();
+  }
+
   // text controller to get user input
   final _controller = TextEditingController();
-
-  // list of todo tasks
-  List toDoList = [
-    ["Sovle A problem", false],
-    ["Do exercise", false],
-  ];
 
   // checkbox was tapped
   void checkBoxChanged(bool? value, int index) {
     setState(() {
-      toDoList[index][1] = !toDoList[index][1];
+      db.toDoList[index][1] = !db.toDoList[index][1];
     });
+    db.updateDatabase(); // update the database
   }
 
   // save new task method
   void saveNewTask() {
     setState(() {
-      toDoList.add([_controller.text, false]); // add new task to the list
+      db.toDoList.add([_controller.text, false]); // add new task to the list
       _controller.clear(); // clear the text field
     });
     Navigator.of(context).pop(); // close the dialog box
+    db.updateDatabase(); // update the database with the new task
   }
 
   // create new task method
@@ -52,8 +69,12 @@ class _HomePageState extends State<HomePage> {
   // delete task method
   void deleteTask(int index) {
     setState(() {
-      toDoList.removeAt(index); // remove the task at the given index
+      db.toDoList.removeAt(index); // remove the task at the given index
     });
+    db.updateDatabase(); // update the database after deletion
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Task deleted'), duration: Duration(seconds: 2)),
+    );
   }
 
   @override
@@ -72,11 +93,11 @@ class _HomePageState extends State<HomePage> {
       ),
 
       body: ListView.builder(
-        itemCount: toDoList.length,
+        itemCount: db.toDoList.length,
         itemBuilder: (context, index) {
           return TodoTile(
-            taskName: toDoList[index][0],
-            isDone: toDoList[index][1],
+            taskName: db.toDoList[index][0],
+            isDone: db.toDoList[index][1],
             onChanged: (value) => checkBoxChanged(value, index),
             deleteFunction: (context) => deleteTask(index),
           );
